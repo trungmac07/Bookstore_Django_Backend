@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <body>
+
+        <h1>Books</h1>
+
+        <ul>
+        {% for x in book %}
+            <li><a href="book_detail/{{ x.id }}">{{ x.name }}</a></li>
+        {% endfor %}
+        </ul>
+
+    </body>
+</html>
