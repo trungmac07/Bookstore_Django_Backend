@@ -59,3 +59,15 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         model = OrderDetail
         fields = '__all__'
         unique_together = (('order', 'book'))
+        
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True)
