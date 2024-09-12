@@ -3,16 +3,28 @@ from .models import *
 
 
 class BookSerializer(serializers.ModelSerializer):
+    
+    genres = serializers.SerializerMethodField()
     class Meta:
         model = Book
-        fields = '__all__'
-
+        fields = ['id', 'title', 'author', 'description', 'price', 'love', 'buy', 'left', 'discount', 'image', 'genres']
+        
+    def get_genres(self, obj):
+        book_genres = BookGenre.objects.filter(book_id__exact=obj).values_list('genre')
+        print(book_genres)
+        genres = Genre.objects.filter(id__in=book_genres).order_by('genre')
+        #print( [genre.genre for genre in genres])
+        return [genre.genre for genre in genres]
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
 
+class ShortGenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = ['genre']
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:

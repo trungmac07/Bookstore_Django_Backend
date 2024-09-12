@@ -16,6 +16,8 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+    
+    
 
 
 class UserManager(BaseUserManager):
@@ -101,6 +103,7 @@ class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     amount = models.IntegerField()
+    date = models.DateTimeField()
     class Meta:
         unique_together = (('user', 'book'),)
 
@@ -119,3 +122,4 @@ class OrderDetail(models.Model):
         unique_together = (('order', 'book'),)
 
 
+#YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ]

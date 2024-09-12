@@ -1,4 +1,4 @@
-
+import random
 
 def books():
     book = [
@@ -917,3 +917,37 @@ def books():
 ]
     return book 
 
+
+
+def genres():
+    genre = [
+        {"genre" : "action"},
+        {"genre" : "novel"},
+        {"genre" : "scific"},
+        {"genre" : "adventure"},
+        {"genre" : "romance"},
+        {"genre" : "fantasy"},
+        {"genre" : "mystery"},
+        {"genre" : "horror"},
+        {"genre" : "kid"}
+    ]
+    return genre 
+
+def book_genres():
+    book = books()
+    genre = set(i for i in range(1,len(genres())+1))
+    
+    book_genre = []
+    for i in range(27,len(book)):
+        selected = set()
+        for j in range(random.randint(1, 3)):
+            k = random.randint(1, len(genre) + 1)
+            if(k not in selected):
+                selected.add(k)
+                book_genre.append({
+                    "book" : i,
+                    "genre" : k
+                })
+    
+    return book_genre    
+    

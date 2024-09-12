@@ -1,0 +1,11 @@
+{
+    "email":"a@gmail.com",
+    "first_name":"Trung",
+    "last_name":"Mac",
+    "gender":"M",
+    "date_of_birth":"2/2/1955",
+    "address":"HCM",
+    "phone_number":"0900123457",
+    "password":"123",
+    "password_confirm":"123"
+}

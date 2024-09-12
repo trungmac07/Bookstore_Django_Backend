@@ -48,7 +48,7 @@ def all_books(request):
     }
     return HttpResponse(template.render(context, request))
 
-class Books(generics.ListCreateAPIView):
+class BooksAPIView(generics.ListCreateAPIView):
     
     authentication_classes = [JWTAuthentication]
     def get_permissions(self):
@@ -68,12 +68,12 @@ class Books(generics.ListCreateAPIView):
             queryset = Book.objects.all()
         return Response(self.serializer_class(queryset, many = True).data, status=status.HTTP_200_OK)    
 
-class BooksUpdate(generics.RetrieveUpdateDestroyAPIView):
+class BooksUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BookSerializer
     queryset = Book.objects.all()
     lookup_fields = "pk"
 
-class Genres(generics.ListAPIView):
+class GenresAPIView(generics.ListCreateAPIView):
     serializer_class = GenreSerializer
 
     def get(self, request, format = None):
@@ -84,32 +84,26 @@ class Genres(generics.ListAPIView):
             queryset = Genre.objects.all()
         return Response(self.serializer_class(queryset, many = True).data, status=status.HTTP_200_OK)  
 
-class CreateGenres(generics.CreateAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdmin]
-    serializer_class = GenreSerializer
-
-class GenresUpdate(generics.RetrieveUpdateDestroyAPIView):
+class GenresUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
     lookup_fields = "pk"
 
 
-class BookGenres(generics.ListCreateAPIView):
-    serializer_class = BookGenreSerializer
+class BookGenresAPIView(generics.ListCreateAPIView):
+    serializer_class = BookSerializer
     def get(self, request, format = None):
-        genre = request.query_params.get('genre')
-        book = request.query_params.get('book')
-        if(book == None and genre == None):
-            queryset = BookGenre.objects.all()
-        elif(book != None and genre != None):
-            queryset = BookGenre.objects.filter(book__exact = book, genre__exact = genre)
-        elif(genre != None):
-            queryset = BookGenre.objects.filter(genre__exact = genre)
+        genre = set(int(genre_id) for genre_id in request.query_params.get('genre').split(','))
+       
+        if(genre):
+            book_ids = BookGenre.objects.filter(genre_id__in=genre).values('book_id')
+            queryset = Book.objects.filter(id__in=book_ids).distinct().order_by('id')
+            #queryset = BookGenre.objects.filter(book__exact = book, genre__exact = genre)
+            return Response(self.serializer_class(queryset, many = True).data, status=status.HTTP_200_OK) 
         else:
-            queryset = BookGenre.objects.filter(book__exact = book)
-
-        return Response(self.serializer_class(queryset, many = True).data, status=status.HTTP_200_OK) 
+            queryset = Book.objects.all()
+            #queryset = BookGenre.objects.filter(book__exact = book, genre__exact = genre)
+            return Response(self.serializer_class(queryset, many = True).data, status=status.HTTP_200_OK) 
     
     def delete(self, request, format = None):
         genre = request.data.get('genre')
@@ -122,17 +116,17 @@ class BookGenres(generics.ListCreateAPIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT) 
 
-class BookGenresUpdate(generics.RetrieveUpdateDestroyAPIView):
+class BookGenresUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BookGenreSerializer
     queryset = BookGenre.objects.all()
     lookup_fields = "pk"
 
 
-class Users(generics.ListCreateAPIView):
+class UsersAPIView(generics.ListCreateAPIView):
     serializer_class = UserSerializer
 
 
-class UsersUpdate(generics.RetrieveUpdateDestroyAPIView):
+class UsersUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_fields = "pk"
@@ -201,4 +195,12 @@ class LoginAPIView(APIView):
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
         data = {'message' : "Log in unsuccessfully - email or password is incorrect", 'error' : serializer.errors}    
         return Response(data, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+####### CART #################################
+
+class CartAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     
