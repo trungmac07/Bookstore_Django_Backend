@@ -11,7 +11,7 @@ class BookSerializer(serializers.ModelSerializer):
         
     def get_genres(self, obj):
         book_genres = BookGenre.objects.filter(book_id__exact=obj).values_list('genre')
-        print(book_genres)
+        #print(book_genres)
         genres = Genre.objects.filter(id__in=book_genres).order_by('genre')
         #print( [genre.genre for genre in genres])
         return [genre.genre for genre in genres]
@@ -69,8 +69,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderDetail
-        fields = '__all__'
-        unique_together = (('order', 'book'))
+        fields = ["book", "amount"]
         
 
 

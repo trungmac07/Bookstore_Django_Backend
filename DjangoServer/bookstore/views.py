@@ -204,3 +204,30 @@ class CartAPIView(APIView):
     permission_classes = [IsAuthenticated]
     
     
+class OrderAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    
+    def post(self, request):
+  
+        try:
+            order_data = request.data.get("order_details", [])
+            user_id = request.data.get("user_id")
+            
+            total = 0
+            for order in order_data:
+                book = Book.objects.get(pk = order["book"])
+                total += book.price * order["amount"]
+            
+            new_order = Order(user_id = user_id, total = total)
+            new_order.save()
+
+            for order in order_data:
+                book = Book.objects.get(pk = order["book"])
+                detail = OrderDetail(order = new_order, book = book, amount = order["amount"], price = book.price, total = book.price * order["amount"])
+                detail.save()
+            
+            return Response("Order successfully !", status=status.HTTP_201_CREATED)
+        except:
+            return Response("An error occurred while creating the order", status=status.HTTP_400_BAD_REQUEST)

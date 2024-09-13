@@ -11,7 +11,8 @@ urlpatterns = [
     path('api/genres/<int:pk>/', views.GenresUpdateAPIView.as_view(), name='genres_update'),
     path('api/bookgenres/', views.BookGenresAPIView.as_view(), name='bookgenres'),
     path('api/bookgenres/<int:pk>/', views.BookGenresUpdateAPIView.as_view(), name='bookgenres_update'),
-
+    path('api/order/', views.OrderAPIView.as_view(), name='order'),
+    
     path('api/login/', views.LoginAPIView.as_view(), name='login'),
     path('api/signup/', views.SignUpAPIView.as_view(), name='signup'),
 

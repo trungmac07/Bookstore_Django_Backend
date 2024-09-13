@@ -62,6 +62,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=15, blank=True)
     profile_picture = models.BinaryField(null=True, blank=True)
     date_joined = models.DateTimeField(default=timezone.now)
+    
 
     objects = UserManager()
 
@@ -109,7 +110,7 @@ class Cart(models.Model):
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add=True)
     total = models.IntegerField()
 
 class OrderDetail(models.Model):
@@ -117,7 +118,8 @@ class OrderDetail(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     amount = models.IntegerField()
     price = models.IntegerField()
-    discount = models.FloatField()
+    total = models.IntegerField()
+
     class Meta:
         unique_together = (('order', 'book'),)
 
